@@ -1,62 +1,55 @@
 import { useEffect, useState } from "react";
-import { Box, Flex, Icon, Text, Textarea } from "@chakra-ui/react";
+import {
+  Box,
+  Flex,
+  Icon,
+  Text,
+  Textarea,
+  Radio,
+  RadioGroup,
+} from "@chakra-ui/react";
 import { Input, Button } from "@chakra-ui/react";
 import axios from "axios";
 import { motion } from "framer-motion";
-import { FaMicrophone } from 'react-icons/fa';
-import { GrNext, GrPrevious } from 'react-icons/gr'
-
+import { FaMicrophone } from "react-icons/fa";
+import { GrNext, GrPrevious } from "react-icons/gr";
 
 export default function Home() {
-  const farmerPrompts = [
-    "How can I improve the fertility of my soil?",
-    "What crops are best suited for my climate?",
-    "What are the best practices for crop rotation?",
-    "How can I conserve water when irrigating my crops?",
-    "What is the best way to manage weeds on my farm?",
-    "How can I prevent erosion on my fields?",
-    "What are the benefits of using cover crops?",
-    "What is the best way to store and preserve my crops?",
-    "How can I increase my farm's profitability?",
-    "What are some effective marketing strategies for small farms?",
-    "How can I reduce my farm's carbon footprint?",
-    "How can I get started with organic farming?",
-    "How can I attract beneficial insects to my crops?",
-    "What are some natural ways to fertilize my soil?",
-    "What are some effective ways to control soil erosion?",
-    "What are some common crop diseases and how can I prevent them?",
-    "How can I use technology to improve my farm's productivity?",
-    "What are some ways to prevent soil compaction?",
-    "How can I ensure the health of my livestock?",
-    "What are some effective ways to control livestock parasites?",
-    "How can I make my farm more energy-efficient?",
-    "What are some effective ways to manage farm waste?",
-    "How can I improve my crop yields?",
-    "What are some effective ways to control crop pests?",
-    "How can I ensure the quality of my crops?",
-    "What are some ways to prevent soil erosion on hillsides?",
-    "How can I use natural pest control methods on my farm?",
-    "What are some effective ways to manage weeds in my crops?",
-    "How can I attract pollinators to my crops?",
-    "What are some effective ways to manage irrigation on my farm?",
-    "How can I ensure the safety of my food products?",
-    "How can I improve the biodiversity on my farm?",
-    "What are some effective ways to manage grazing on my farm?",
-    "How can I use compost to improve my soil?",
-    "What are some ways to prevent soil erosion caused by water?",
-    "How can I improve my farm's soil health?",
-    "What are some effective ways to control deer damage to my crops?",
-    "How can I use green manure to improve my soil?",
-    "What are some effective ways to manage pests in my greenhouse?",
-    "How can I ensure the quality and safety of my farm equipment?",
-    "What are some effective ways to control bird damage to my crops?",
-    "How can I use crop rotation to improve my soil?",
-    "What are some effective ways to manage irrigation on a slope?",
-    "How can I ensure the health of my bees?",
-    "How can I improve my farm's biodiversity?",
-    "What are some effective ways to manage manure on my farm?",
-    "How can I use natural methods to control aphids on my crops?",
-  ];
+const farmerPrompts = [
+"Mere mitti ki urvarata ko kaise badhaya ja sakta hai?",
+"Mere mausam ke liye kaunse fasal sabse acchi hai?",
+"Crop rotation ke liye sabse acche tarike kya hai?",
+"Main kheton ki sinchai karte samay jal ki bachat kaise kar sakta hun?",
+"Mere kheton par jhadiyon ko kaise niyantrit kiya ja sakta hai?",
+"Main apne kshetron mein jamin ki kheechav kaise rok sakta hun?",
+"Cover crops use karne ke kya fayde hain?",
+"Mere fasalon ko kaise store aur preserve kiya ja sakta hai?",
+"Main apne khet ki munafahej kaise bada sakta hun?",
+"Chote kisanon ke liye kya prabhavi marketing strategies hain?",
+"Main apne kheton ki carbon footprint kaise kam kar sakta hun?",
+"Main organic farming se kaise shuruat kar sakta hun?",
+"Main apne fasalon ke liye faydemand keetanuon ko kaise attract kar sakta hun?",
+"Mitti ko natural tarike se kaise urvarak diya ja sakta hai?",
+"Jamin ki kheechav ko kaise niyantrit kiya ja sakta hai?",
+"Kuch common crop diseases hain aur inhe kaise roka ja sakta hai?",
+"Main technology ka istemal kar ke apne kheton ki productivity kaise badha sakta hun?",
+"Mitti ki gati ko rokne ke kuch tarike kya hain?",
+"Main apne pashuon ke svasthy ko kaise surakshit kar sakta hun?",
+"Pashuon ke kitanuon ko niyantrit karne ke kuch prabhavi tarike kya hain?",
+"Main apne kheton ki energy efficiency kaise badha sakta hun?",
+"Kheton ki kachra niyantran ke kuch prabhavi tarike kya hain?",
+"Mere fasalon ki paidavar kaise badhayi ja sakti hai?",
+"Fasalon ke keetanuon ko kaise niyantrit kiya ja sakta hai?",
+"Mere fasalon ki quality ko kaise surakshit kiya ja sakta hai?",
+"Hillside mein jamin ki kheechav ko kaise roka ja sakta hai?",
+"Apne kheton par prakritik keetanuon ka istemal kaise kiya ja sakta hai?",
+"Fasalon mein jhadiyon ko niyantrit karne ke kuch prabhavi tarike kya hain?",
+"Mere fasalon ko pollinators kaise attract kiya ja sakta hai?",
+"Kheton ki sinchai ko kaise niyantrit kiya ja sakta hai?",
+"Main apne khadya utpaadon ki suraksha kaise surakshit kar sakta hun?",
+"Main apne kheton ki jeev-jantu vividhta ko kaise badha sakta hun?",
+  "Mere kshetron mein chara kaise prabandhit kiya ja sakta hai?"
+]
 
   const [inputValue, setInputValue] = useState("");
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -87,7 +80,7 @@ export default function Home() {
 
   const handleClick = () => {
     axios
-      .post("YOUR_NODEJS_SERVER_URL", { content: inputValue })
+      .post("YOUR_NODEJS_SERVER_URL", { message: inputValue })
       .then((response) => {
         console.log(response.data);
       })
@@ -96,48 +89,51 @@ export default function Home() {
       });
   };
 
-  const Slide = ({ prompt, onClick }) => {
-  return (
-    <motion.div
-      initial={{ opacity: 0, x: 100 }}
-      animate={{ opacity: 1, x: 0 }}
-      exit={{ opacity: 0, x: -100 }}
-      transition={{ duration: 0.5 }}
-      alignItems="center"
-      justifyContent="center"
-      textAlign="center"
-      border="1px solid"
-      borderRadius="8px"
-      h="80%"
-      w="20%"
-      p="10px"
-      onClick={onClick}
-      css={{ wordWrap: "break-word", overflow: "hidden", maxWidth: "20%" }}
-    >
-      <Text>{prompt}</Text>
-    </motion.div>
-  );
+  const handleRadioClick = (value) => {
+    console.log(value);
   };
-  
+
+  const Slide = ({ prompt, onClick }) => {
+    return (
+      <motion.div
+        initial={{ opacity: 0, x: 100 }}
+        animate={{ opacity: 1, x: 0 }}
+        exit={{ opacity: 0, x: -100 }}
+        transition={{ duration: 0.5 }}
+        alignItems="center"
+        justifyContent="center"
+        textAlign="center"
+        border="1px solid"
+        borderRadius="8px"
+        h="80%"
+        w="20%"
+        p="10px"
+        onClick={onClick}
+        css={{ wordWrap: "break-word", overflow: "hidden", maxWidth: "20%" }}
+      >
+        <Text>{prompt}</Text>
+      </motion.div>
+    );
+  };
+
   const handleClickSlide = (prompt) => {
     setInputValue(prompt);
   };
-
 
   return (
     <Flex
       h="100vh"
       w="100%"
-      bg="teal.100"
       justifyContent="center"
       alignItems="center"
+      bg="#151518"
+      color="white"
     >
-      <Flex h="100vh" w="80%" bg="orange.200" direction="column">
-        <Flex bg="red.300" h="10vh">
+      <Flex h="100vh" w="80%" direction="column">
+        <Flex h="10vh">
           Navbar
         </Flex>
         <Flex
-          bg="blue.300"
           h="78vh"
           maxH="auto"
           overflowY="auto"
@@ -153,7 +149,13 @@ export default function Home() {
             justifyContent="center"
             gap="8px"
           >
-            <Button p="8px" borderRadius="50" leftIcon={<GrPrevious />} onClick={handlePrevSlide} iconSpacing={1} />
+            <Button
+              p="8px"
+              borderRadius="50"
+              leftIcon={<GrPrevious />}
+              onClick={handlePrevSlide}
+              iconSpacing={1}
+            />
             {getRandomPrompts().map((prompt, index) => (
               <Flex
                 alignItems="center"
@@ -169,24 +171,115 @@ export default function Home() {
                   wordWrap: "break-word",
                   overflow: "hidden",
                   maxWidth: "20%",
+                  transition: "box-shadow 0.3s ease-in-out",
+                  ":hover": {
+                    boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.5)",
+                  },
                 }}
               >
-                <Slide key={index} onClick={() => handleClickSlide(prompt)} prompt={prompt} />
+                <Slide
+                  key={index}
+                  onClick={() => handleClickSlide(prompt)}
+                  prompt={prompt}
+                />
               </Flex>
             ))}
-            <Button p="8px" borderRadius="50" rightIcon={<GrNext />} onClick={handleNextSlide}  iconSpacing={1} />
+            <Button
+              p="8px"
+              borderRadius="50"
+              rightIcon={<GrNext />}
+              onClick={handleNextSlide}
+              iconSpacing={1}
+            />
           </Flex>
-          <Flex h="26vh" w="100%" bg="purple.100" p="8px">
-              Hi
-          </Flex>
-          <Flex h="26vh" w="100%" bg="orange.300" gap="3" justifyContent="center" alignItems="center" direction="column">
-            <Flex bg="white" p="20px" borderRadius="50">    
-            <Icon as={FaMicrophone} boxSize={8} />
-            </Flex> 
-            Or Record Here...
+
+          <Flex h="30vh" w="100%"  p="16px" direction="column">
+            <Text w="100%" fontSize="24px" textAlign="center">
+              You can additionally add some more options:
+            </Text>
+            <Flex
+              w="100%"
+              h="100%"
+              border="1px solid"
+              borderRadius="8"
+              alignItems="center"
+              justifyContent="space-around"
+            >
+              <Flex direction="column" w="100%" borderRight="1px solid">
+                <Text textAlign="center" fontSize="20px">
+                  Type
+                </Text>
+                <RadioGroup onChange={handleRadioClick}>
+                  <Flex direction="column" justifyContent="center" pl="4">
+                    <Radio value="Crops">Crops</Radio>
+                    <Radio value="Plants">Plants</Radio>
+                    <Radio value="Trees">Trees</Radio>
+                    <Radio value="Flowers">Flowers</Radio>
+                    <Input variant="flushed" placeholder="others..." w="90%" />
+                  </Flex>
+                </RadioGroup>
+              </Flex>
+              <Flex direction="column" w="100%" borderRight="1px solid">
+                <Text textAlign="center" fontSize="20px">
+                  Weather
+                </Text>
+                <RadioGroup onChange={handleRadioClick}>
+                  <Flex direction="column" justifyContent="center" pl="4">
+                    <Radio value="Sunny">Sunny</Radio>
+                    <Radio value="Rainy">Rainy</Radio>
+                    <Radio value="Humid">Humid</Radio>
+                    <Radio value="Frosty">Frosty</Radio>
+                    <Input variant="flushed" placeholder="others..." w="90%" />
+                  </Flex>
+                </RadioGroup>
+              </Flex>
+              <Flex direction="column" w="100%" borderRight="1px solid">
+                <Text textAlign="center" fontSize="20px">
+                  State
+                </Text>
+                <RadioGroup onChange={handleRadioClick}>
+                  <Flex direction="column" justifyContent="center" pl="4">
+                    <Radio value="Maharashtra">Maharashtra</Radio>
+                    <Radio value="Gujarat">Gujarat</Radio>
+                    <Radio value="Karnataka">Karnataka</Radio>
+                    <Radio value="Uttar Pradesh">Uttar Pradesh</Radio>
+                    <Input variant="flushed" placeholder="others..." w="90%" />
+                  </Flex>
+                </RadioGroup>
+              </Flex>
+              <Flex direction="column" w="100%">
+                <Text textAlign="center" fontSize="20px">
+                  Soil
+                </Text>
+                <RadioGroup onChange={handleRadioClick}>
+                  <Flex direction="column" justifyContent="center" pl="4">
+                    <Radio value="Loamy soil">Loamy soil</Radio>
+                    <Radio value="Clay Soil">Clay Soil</Radio>
+                    <Radio value="Red Soil">Red Soil</Radio>
+                    <Radio value="Laterite Soil">Laterite Soil</Radio>
+                    <Input variant="flushed" placeholder="others..." w="90%" />
+                  </Flex>
+                </RadioGroup>
+              </Flex>
             </Flex>
+          </Flex>
+
+          <Flex
+            h="22vh"
+            w="100%"
+            gap="3"
+            mt="4"
+            justifyContent="center"
+            alignItems="center"
+            direction="column"
+          >
+            <Flex bg="white" p="20px" borderRadius="50">
+              <Icon as={FaMicrophone} boxSize={8} />
+            </Flex>
+            Or Record Here...
+          </Flex>
         </Flex>
-        <Flex bg="green.300" h="12vh" alignItems="center" p="10px" gap={2}>
+        <Flex h="12vh" alignItems="center" p="10px" gap={2}>
           <Textarea
             bg="white"
             fontSize="24px"
