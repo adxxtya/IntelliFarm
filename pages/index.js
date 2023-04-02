@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import {
   Box,
   Flex,
@@ -60,6 +60,12 @@ export default function Home() {
   const [responsePage, setResponsePage] = useState(false);
   const [loader, setLoader] = useState(false);
   const [response, setResponse] = useState({});
+  const [soil, setSoil] = useState("");
+  const [city, setCity] = useState("");
+  const [weather, setWeather] = useState("");
+  const [type, setType] = useState("");
+  const inputRef = useRef()
+  
 
   const handleNextSlide = () => {
     setCurrentSlide((currentSlide + 1) % farmerPrompts.length);
@@ -85,39 +91,32 @@ export default function Home() {
     setInputValue(event.target.value);
   };
 
-  const handleClick = async () => {
-    const result = await fetch("https://intellifarm-backend.onrender.com/ask", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": "*",
-      },
-      body: JSON.stringify({ geo: "pune", q: inputValue }),
-    });
-
-    if (result.ok) {
-      setIsResponseSuccess(true);
-      setResponsePage(true);
-      setLoader(true);
-    }
-
-    const response = await result.json();
-    setResponse(response);
-    console.log(response);
-  };
-
   const handleRadioClickType = (value) => {
-    console.log(value);
+    setType(value);
   };
 
   const handleRadioClickSoil = (value) => {
-    console.log(value);
+    setSoil(value);
   };
   const handleRadioClickCity = (value) => {
-    console.log(value);
+    setCity(value);
   };
   const handleRadioClickWeather = (value) => {
-    console.log(value);
+    setWeather(value);
+  };
+
+  const handleTypeChange = (event) => {
+    setType(event.target.value);
+  };
+
+  const handleCityChange = (event) => {
+    setCity(event.target.value);
+  };
+  const handleSoilChange = (event) => {
+    setSoil(event.target.value);
+  };
+  const handleWeatherChange = (event) => {
+    setCity(event.target.value);
   };
 
   const Slide = ({ prompt, onClick }) => {
@@ -143,13 +142,41 @@ export default function Home() {
     );
   };
 
-  console.log(response);
+  const handleClick = async () => {
+    const inputValue2 = inputRef.current.value
+    const result = await fetch("https://intellifarm-backend.onrender.com/ask", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*",
+      },
+      body: JSON.stringify({
+        geo: city,
+        q: inputValue2,
+        info: { type: type, soil: soil, weather: weather },
+      }),
+    });
 
-  const handleClickSlide = (prompt) => {
-    setInputValue(prompt);
+    if (result.success) {
+      setIsResponseSuccess(true);
+      setResponsePage(true);
+      setLoader(true);
+    }
+
+    const response = await result.json();
+    setResponse(response);
+    setResponsePage(true);
   };
 
-  const finalQuery = "Hello";
+  console.log(response);
+
+
+  const handleClickSlide = (prompt) => {
+    inputRef.current.value = prompt
+  };
+
+  const finalQuery =
+    "I am a farmer. ${geo && ` I am from ${geo}.`}. My question is, ${q} ?. ${info.soil && `Also consider My soil type is ${info.soil}.`}, ${weather && weather is ${info.weather}} and ${type && type of plant is ${info.type}}. ${geo && consider the current and future weather of ${geo}} and soil minerals. Give me the response in list form only. without any prefix and postfix. max 10 responses. Response should add the soil realated properties such as color, texture, structure, porosity, density, consistence, aggregate stability, minerals, PH level, temperature (only if necessary and add prefix soil properties.). Give me only one answer yes OR no once if the question is of type closed question (for example: yes.) Also tell me the temperature, pressure and humidity of ${geo} in Temperature: 26°C format. Also give me a suggestion related to future says suggestion: the suggestion. Also give me one pro tip says pro tip: the tip. Try to use future tense. Respone should strictly be in the language of the question ";
 
   return (
     <>
@@ -158,7 +185,7 @@ export default function Home() {
         w="100%"
         justifyContent="center"
         alignItems="center"
-        fontWeight="600"
+        fontWeight="400"
         style={{
           backgroundImage:
             "url(https://source.unsplash.com/random/500x500?sig=1)",
@@ -198,11 +225,13 @@ export default function Home() {
             mt="16px"
             position="absolute"
             zIndex="2"
+            type
           >
-            <Image src="/assets/farmer-logo.webp" width={70} height={40} />
-            <Text fontSize="36px">IntelliFarm</Text>
+            <Image src="/assets/farmer-logo.webp" width={60} height={40} />
+            <Text fontSize="32px">IntelliFarm</Text>
           </Flex>
-          {responsePage ? (
+
+          {!responsePage ? (
             <>
               <Flex
                 zIndex="2"
@@ -215,7 +244,13 @@ export default function Home() {
                 direction="column"
                 mt="6vh"
               >
-                <Text w="100%" fontSize="24px" mb="2px" textAlign="center">
+                <Text
+                  w="100%"
+                  fontSize="24px"
+                  mb="-14px"
+                  mt="18px"
+                  textAlign="center"
+                >
                   You can directly choose a random prompt from here
                 </Text>
                 <Flex
@@ -240,7 +275,7 @@ export default function Home() {
                       border="1px solid"
                       borderRadius="8px"
                       key={index}
-                      h="80%"
+                      h="60%"
                       w="20%"
                       p="10px"
                       css={{
@@ -269,12 +304,12 @@ export default function Home() {
                   />
                 </Flex>
 
-                <Flex h="34vh" w="100%" p="16px" direction="column">
+                <Flex h="34vh" w="100%" p="16px" direction="column" alignItems="center">
                   <Text w="100%" fontSize="24px" mb="10px" textAlign="center">
                     You can additionally add some more options:
                   </Text>
                   <Flex
-                    w="100%"
+                    w="70%"
                     h="100%"
                     border="1px solid"
                     borderRadius="8"
@@ -282,7 +317,7 @@ export default function Home() {
                     justifyContent="space-around"
                   >
                     <Flex direction="column" w="100%" borderRight="1px solid">
-                      <Text textAlign="center" fontSize="20px">
+                      <Text textAlign="center" fontSize="24px">
                         Type
                       </Text>
                       <RadioGroup onChange={handleRadioClickType}>
@@ -293,14 +328,17 @@ export default function Home() {
                           <Radio value="Flowers">Flowers</Radio>
                           <Input
                             variant="flushed"
-                            placeholder="others..."
+                            placeholder="other types..."
+                            _placeholder={{ color: "white" }}
                             w="90%"
+                            onChange={handleTypeChange}
+                            value={type}
                           />
                         </Flex>
                       </RadioGroup>
                     </Flex>
                     <Flex direction="column" w="100%" borderRight="1px solid">
-                      <Text textAlign="center" fontSize="20px">
+                      <Text textAlign="center" fontSize="24px">
                         Weather
                       </Text>
                       <RadioGroup onChange={handleRadioClickWeather}>
@@ -311,15 +349,18 @@ export default function Home() {
                           <Radio value="Frosty">Frosty</Radio>
                           <Input
                             variant="flushed"
-                            placeholder="others..."
+                            placeholder="others weathers..."
+                            _placeholder={{ color: "white" }}
                             w="90%"
+                            onChange={handleWeatherChange}
+                            value={weather}
                           />
                         </Flex>
                       </RadioGroup>
                     </Flex>
                     <Flex direction="column" w="100%" borderRight="1px solid">
-                      <Text textAlign="center" fontSize="20px">
-                        State
+                      <Text textAlign="center" fontSize="24px">
+                        City
                       </Text>
                       <RadioGroup onChange={handleRadioClickCity}>
                         <Flex direction="column" justifyContent="center" pl="4">
@@ -329,14 +370,17 @@ export default function Home() {
                           <Radio value="Hyderabad">Hyderabad</Radio>
                           <Input
                             variant="flushed"
-                            placeholder="others..."
+                            placeholder="other cities..."
                             w="90%"
+                            _placeholder={{ color: "white" }}
+                            onChange={handleCityChange}
+                            value={city}
                           />
                         </Flex>
                       </RadioGroup>
                     </Flex>
                     <Flex direction="column" w="100%">
-                      <Text textAlign="center" fontSize="20px">
+                      <Text textAlign="center" fontSize="24px">
                         Soil
                       </Text>
                       <RadioGroup onChange={handleRadioClickSoil}>
@@ -347,8 +391,11 @@ export default function Home() {
                           <Radio value="Laterite Soil">Laterite Soil</Radio>
                           <Input
                             variant="flushed"
-                            placeholder="others..."
+                            placeholder="other soil..."
                             w="90%"
+                            _placeholder={{ color: "white" }}
+                            onChange={handleSoilChange}
+                            value={soil}
                           />
                         </Flex>
                       </RadioGroup>
@@ -374,7 +421,7 @@ export default function Home() {
                   right: 0,
                   background:
                     "linear-gradient(180deg, rgba(255, 255, 255, 0.2)0%, rgba(255, 255, 255, 0.2) 100%)",
-                  backdropFilter: "blur(20px) brightness(0.7)",
+                  backdropFilter: "blur(10px) brightness(0.8)",
                   filter: "brightness(1)",
                   zIndex: 0,
                 }}
@@ -384,7 +431,11 @@ export default function Home() {
                   direction="column"
                   position="relative"
                   justifyContent="center"
-                  _before={{
+                  p="4"
+                  h="auto"
+                    maxH="65%"  
+                    overflow="scroll"
+                 _before={{
                     content: '""',
                     position: "absolute",
                     top: 0,
@@ -392,18 +443,33 @@ export default function Home() {
                     bottom: 0,
                     right: 0,
                     background:
-                      "linear-gradient(180deg, rgba(255, 255, 255, 0.2)0%, rgba(255, 255, 255, 0.2) 100%)",
+                      "linear-gradient(180deg, rgba(0, 0, 0, 0.2)0%, rgba(0, 0, 0, 0.2) 100%)",
                     backdropFilter: "blur(20px) brightness(0.7)",
                     filter: "brightness(1)",
                     zIndex: 0,
                   }}
                 >
-                  <Text fontSize="24px" w="95%" ml="5" zIndex="100">
+                  <Text fontSize="24px" w="95%" overflowY="auto" ml="5" px="24px" zIndex="100">
                     {response.text &&
                       response.text
                         .split("\n")
                         .map((line, index) => <Text key={index}>{line}</Text>)}
                   </Text>
+                </Flex>
+                <Flex
+                  zIndex="100"
+                  w="100%"
+                  h="10%"
+                  justifyContent="center"
+                  alignItems="center"
+                >
+                  <Button
+                      onClick={() => { setResponsePage(false);  inputRef.current.value = ""}}
+                    bg="blackAlpha.700"
+                    _hover={{ bg: "blackAlpha.600" }}
+                  >
+                    Go Back
+                  </Button>
                 </Flex>
               </Flex>
             </>
@@ -424,8 +490,13 @@ export default function Home() {
               border="2px solid #505055"
               height="40px"
               fontSize="18px"
-              onChange={handleInputChange}
-              value={inputValue}
+              ref={inputRef}
+                            _hover={{
+                bg: "#454548"
+                            }}
+                            _active={{
+                bg: "#353538"
+              }}
             />
             <Button
               type="submit"
@@ -436,6 +507,9 @@ export default function Home() {
               border="2px solid #505055"
               padding="10px"
               onClick={handleClick}
+              _hover={{
+                bg: "#454548"
+              }}
             >
               <FiSend size="40px" color="#adadb7" />
             </Button>
