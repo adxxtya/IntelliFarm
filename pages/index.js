@@ -13,49 +13,53 @@ import axios from "axios";
 import { motion } from "framer-motion";
 import { FaMicrophone } from "react-icons/fa";
 import { GrNext, GrPrevious } from "react-icons/gr";
+import { FiSend } from "react-icons/fi";
+
 import Image from "next/image";
 
 export default function Home() {
-const farmerPrompts = [
-"Mere mitti ki urvarata ko kaise badhaya ja sakta hai?",
-"Mere mausam ke liye kaunse fasal sabse acchi hai?",
-"Crop rotation ke liye sabse acche tarike kya hai?",
-"Main kheton ki sinchai karte samay jal ki bachat kaise kar sakta hun?",
-"Mere kheton par jhadiyon ko kaise niyantrit kiya ja sakta hai?",
-"Main apne kshetron mein jamin ki kheechav kaise rok sakta hun?",
-"Cover crops use karne ke kya fayde hain?",
-"Mere fasalon ko kaise store aur preserve kiya ja sakta hai?",
-"Main apne khet ki munafahej kaise bada sakta hun?",
-"Chote kisanon ke liye kya prabhavi marketing strategies hain?",
-"Main apne kheton ki carbon footprint kaise kam kar sakta hun?",
-"Main organic farming se kaise shuruat kar sakta hun?",
-"Main apne fasalon ke liye faydemand keetanuon ko kaise attract kar sakta hun?",
-"Mitti ko natural tarike se kaise urvarak diya ja sakta hai?",
-"Jamin ki kheechav ko kaise niyantrit kiya ja sakta hai?",
-"Kuch common crop diseases hain aur inhe kaise roka ja sakta hai?",
-"Main technology ka istemal kar ke apne kheton ki productivity kaise badha sakta hun?",
-"Mitti ki gati ko rokne ke kuch tarike kya hain?",
-"Main apne pashuon ke svasthy ko kaise surakshit kar sakta hun?",
-"Pashuon ke kitanuon ko niyantrit karne ke kuch prabhavi tarike kya hain?",
-"Main apne kheton ki energy efficiency kaise badha sakta hun?",
-"Kheton ki kachra niyantran ke kuch prabhavi tarike kya hain?",
-"Mere fasalon ki paidavar kaise badhayi ja sakti hai?",
-"Fasalon ke keetanuon ko kaise niyantrit kiya ja sakta hai?",
-"Mere fasalon ki quality ko kaise surakshit kiya ja sakta hai?",
-"Hillside mein jamin ki kheechav ko kaise roka ja sakta hai?",
-"Apne kheton par prakritik keetanuon ka istemal kaise kiya ja sakta hai?",
-"Fasalon mein jhadiyon ko niyantrit karne ke kuch prabhavi tarike kya hain?",
-"Mere fasalon ko pollinators kaise attract kiya ja sakta hai?",
-"Kheton ki sinchai ko kaise niyantrit kiya ja sakta hai?",
-"Main apne khadya utpaadon ki suraksha kaise surakshit kar sakta hun?",
-"Main apne kheton ki jeev-jantu vividhta ko kaise badha sakta hun?",
-  "Mere kshetron mein chara kaise prabandhit kiya ja sakta hai?"
-]
+  const farmerPrompts = [
+    "Mere mitti ki urvarata ko kaise badhaya ja sakta hai?",
+    "Mere mausam ke liye kaunse fasal sabse acchi hai?",
+    "Crop rotation ke liye sabse acche tarike kya hai?",
+    "Main kheton ki sinchai karte samay jal ki bachat kaise kar sakta hun?",
+    "Mere kheton par jhadiyon ko kaise niyantrit kiya ja sakta hai?",
+    "Main apne kshetron mein jamin ki kheechav kaise rok sakta hun?",
+    "Cover crops use karne ke kya fayde hain?",
+    "Mere fasalon ko kaise store aur preserve kiya ja sakta hai?",
+    "Main apne khet ki munafahej kaise bada sakta hun?",
+    "Chote kisanon ke liye kya prabhavi marketing strategies hain?",
+    "Main apne kheton ki carbon footprint kaise kam kar sakta hun?",
+    "Main organic farming se kaise shuruat kar sakta hun?",
+    "Main apne fasalon ke liye faydemand keetanuon ko kaise attract kar sakta hun?",
+    "Mitti ko natural tarike se kaise urvarak diya ja sakta hai?",
+    "Jamin ki kheechav ko kaise niyantrit kiya ja sakta hai?",
+    "Kuch common crop diseases hain aur inhe kaise roka ja sakta hai?",
+    "Main technology ka istemal kar ke apne kheton ki productivity kaise badha sakta hun?",
+    "Mitti ki gati ko rokne ke kuch tarike kya hain?",
+    "Main apne pashuon ke svasthy ko kaise surakshit kar sakta hun?",
+    "Pashuon ke kitanuon ko niyantrit karne ke kuch prabhavi tarike kya hain?",
+    "Main apne kheton ki energy efficiency kaise badha sakta hun?",
+    "Kheton ki kachra niyantran ke kuch prabhavi tarike kya hain?",
+    "Mere fasalon ki paidavar kaise badhayi ja sakti hai?",
+    "Fasalon ke keetanuon ko kaise niyantrit kiya ja sakta hai?",
+    "Mere fasalon ki quality ko kaise surakshit kiya ja sakta hai?",
+    "Hillside mein jamin ki kheechav ko kaise roka ja sakta hai?",
+    "Apne kheton par prakritik keetanuon ka istemal kaise kiya ja sakta hai?",
+    "Fasalon mein jhadiyon ko niyantrit karne ke kuch prabhavi tarike kya hain?",
+    "Mere fasalon ko pollinators kaise attract kiya ja sakta hai?",
+    "Kheton ki sinchai ko kaise niyantrit kiya ja sakta hai?",
+    "Main apne khadya utpaadon ki suraksha kaise surakshit kar sakta hun?",
+    "Main apne kheton ki jeev-jantu vividhta ko kaise badha sakta hun?",
+    "Mere kshetron mein chara kaise prabandhit kiya ja sakta hai?",
+  ];
 
   const [inputValue, setInputValue] = useState("");
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isResponseSuccess, setIsResponseSuccess] = useState(false);
-  const [response, setResponse] = useState({})
+  const [responsePage, setResponsePage] = useState(false);
+  const [loader, setLoader] = useState(false);
+  const [response, setResponse] = useState({});
 
   const handleNextSlide = () => {
     setCurrentSlide((currentSlide + 1) % farmerPrompts.length);
@@ -82,29 +86,37 @@ const farmerPrompts = [
   };
 
   const handleClick = async () => {
-    const result = await fetch(
-      "https://intellifarm-backend.onrender.com/ask",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Access-Control-Allow-Origin": "*",
-        },
-        body: JSON.stringify({ geo: "pune",q: inputValue }),
-      }
-    );
+    const result = await fetch("https://intellifarm-backend.onrender.com/ask", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*",
+      },
+      body: JSON.stringify({ geo: "pune", q: inputValue }),
+    });
 
     if (result.ok) {
       setIsResponseSuccess(true);
+      setResponsePage(true);
+      setLoader(true);
     }
 
     const response = await result.json();
-    setResponse(response)
+    setResponse(response);
     console.log(response);
-    console.log(Boolean(response));
   };
-  
-  const handleRadioClick = (value) => {
+
+  const handleRadioClickType = (value) => {
+    console.log(value);
+  };
+
+  const handleRadioClickSoil = (value) => {
+    console.log(value);
+  };
+  const handleRadioClickCity = (value) => {
+    console.log(value);
+  };
+  const handleRadioClickWeather = (value) => {
     console.log(value);
   };
 
@@ -137,182 +149,299 @@ const farmerPrompts = [
     setInputValue(prompt);
   };
 
+  const finalQuery = "Hello";
+
   return (
     <>
-    <Flex
-      h="100vh"
-      w="100%"
-      justifyContent="center"
-      alignItems="center"
-      bg="black"
-      color="white"
-    >
-      <Flex h="100vh" w="80%" direction="column">
-        
-        
-       <Flex h="10vh" w="100%" ml="-12" alignItems="flex-end" mt="16px" position="absolute">
-            <Image src="/assets/farmer-logo.webp" width={80} height={50} />
+      <Flex
+        h="100vh"
+        w="100%"
+        justifyContent="center"
+        alignItems="center"
+        fontWeight="600"
+        style={{
+          backgroundImage:
+            "url(https://source.unsplash.com/random/500x500?sig=1)",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          filter: "brightness(0.9)",
+        }}
+        color="white"
+        overflow="hidden"
+        overscroll="none"
+        zIndex="-2"
+      >
+        <Flex
+          h="100vh"
+          w="80%"
+          direction="column"
+          position="relative"
+          _before={{
+            content: '""',
+            position: "absolute",
+            top: 0,
+            left: 0,
+            bottom: 0,
+            right: 0,
+            background:
+              "linear-gradient(180deg, rgba(255, 255, 255, 0.2)0%, rgba(255, 255, 255, 0.2) 100%)",
+            backdropFilter: "blur(20px) brightness(0.7)",
+            filter: "brightness(1)",
+            zIndex: 0,
+          }}
+        >
+          <Flex
+            h="8vh"
+            w="100%"
+            ml="2"
+            alignItems="flex-end"
+            mt="16px"
+            position="absolute"
+            zIndex="2"
+          >
+            <Image src="/assets/farmer-logo.webp" width={70} height={40} />
             <Text fontSize="36px">IntelliFarm</Text>
           </Flex>
-            {true ? <>
-            <Flex
-            h="78vh"
-            maxH="auto"
-            overflowY="auto"
-            paddingY="20px"
-            paddingX="10px"
-            scrollBehavior="smooth"
-            direction="column"
-            mt="8vh"
-          >
-              <Text w="100%" fontSize="24px" mb="2px" textAlign="center">
-                You can directly choose a random prompt from here
-              </Text>
+          {responsePage ? (
+            <>
               <Flex
-                h="30vh"
-                w="100%"
-                alignItems="center"
-                justifyContent="center"
-                gap="8px"
+                zIndex="2"
+                h="78vh"
+                maxH="auto"
+                overflowY="auto"
+                paddingY="20px"
+                paddingX="10px"
+                scrollBehavior="smooth"
+                direction="column"
+                mt="6vh"
               >
-                <Button
-                  p="8px"
-                  borderRadius="50"
-                  leftIcon={<GrPrevious />}
-                  onClick={handlePrevSlide}
-                  iconSpacing={1} />
-                {getRandomPrompts().map((prompt, index) => (
-                  <Flex
-                    alignItems="center"
-                    justifyContent="center"
-                    textAlign="center"
-                    border="1px solid"
-                    borderRadius="8px"
-                    key={index}
-                    h="80%"
-                    w="20%"
-                    p="10px"
-                    css={{
-                      wordWrap: "break-word",
-                      overflow: "hidden",
-                      maxWidth: "20%",
-                      transition: "box-shadow 0.3s ease-in-out",
-                      ":hover": {
-                        boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.5)",
-                      },
-                    }}
-                  >
-                    <Slide
-                      key={index}
-                      onClick={() => handleClickSlide(prompt)}
-                      prompt={prompt} />
-                  </Flex>
-                ))}
-                <Button
-                  p="8px"
-                  borderRadius="50"
-                  rightIcon={<GrNext />}
-                  onClick={handleNextSlide}
-                  iconSpacing={1} />
-              </Flex>
-
-              <Flex h="34vh" w="100%" p="16px" direction="column">
-                <Text w="100%" fontSize="24px" mb="10px" textAlign="center">
-                  You can additionally add some more options:
+                <Text w="100%" fontSize="24px" mb="2px" textAlign="center">
+                  You can directly choose a random prompt from here
                 </Text>
                 <Flex
+                  h="30vh"
                   w="100%"
-                  h="100%"
-                  border="1px solid"
-                  borderRadius="8"
                   alignItems="center"
-                  justifyContent="space-around"
+                  justifyContent="center"
+                  gap="8px"
                 >
-                  <Flex direction="column" w="100%" borderRight="1px solid">
-                    <Text textAlign="center" fontSize="20px">
-                      Type
-                    </Text>
-                    <RadioGroup onChange={handleRadioClick}>
-                      <Flex direction="column" justifyContent="center" pl="4">
-                        <Radio value="Crops">Crops</Radio>
-                        <Radio value="Plants">Plants</Radio>
-                        <Radio value="Trees">Trees</Radio>
-                        <Radio value="Flowers">Flowers</Radio>
-                        <Input variant="flushed" placeholder="others..." w="90%" />
-                      </Flex>
-                    </RadioGroup>
-                  </Flex>
-                  <Flex direction="column" w="100%" borderRight="1px solid">
-                    <Text textAlign="center" fontSize="20px">
-                      Weather
-                    </Text>
-                    <RadioGroup onChange={handleRadioClick}>
-                      <Flex direction="column" justifyContent="center" pl="4">
-                        <Radio value="Sunny">Sunny</Radio>
-                        <Radio value="Rainy">Rainy</Radio>
-                        <Radio value="Humid">Humid</Radio>
-                        <Radio value="Frosty">Frosty</Radio>
-                        <Input variant="flushed" placeholder="others..." w="90%" />
-                      </Flex>
-                    </RadioGroup>
-                  </Flex>
-                  <Flex direction="column" w="100%" borderRight="1px solid">
-                    <Text textAlign="center" fontSize="20px">
-                      State
-                    </Text>
-                    <RadioGroup onChange={handleRadioClick}>
-                      <Flex direction="column" justifyContent="center" pl="4">
-                        <Radio value="Maharashtra">Maharashtra</Radio>
-                        <Radio value="Gujarat">Gujarat</Radio>
-                        <Radio value="Karnataka">Karnataka</Radio>
-                        <Radio value="Uttar Pradesh">Uttar Pradesh</Radio>
-                        <Input variant="flushed" placeholder="others..." w="90%" />
-                      </Flex>
-                    </RadioGroup>
-                  </Flex>
-                  <Flex direction="column" w="100%">
-                    <Text textAlign="center" fontSize="20px">
-                      Soil
-                    </Text>
-                    <RadioGroup onChange={handleRadioClick}>
-                      <Flex direction="column" justifyContent="center" pl="4">
-                        <Radio value="Loamy soil">Loamy soil</Radio>
-                        <Radio value="Clay Soil">Clay Soil</Radio>
-                        <Radio value="Red Soil">Red Soil</Radio>
-                        <Radio value="Laterite Soil">Laterite Soil</Radio>
-                        <Input variant="flushed" placeholder="others..." w="90%" />
-                      </Flex>
-                    </RadioGroup>
+                  <Button
+                    p="8px"
+                    borderRadius="50"
+                    leftIcon={<GrPrevious />}
+                    onClick={handlePrevSlide}
+                    iconSpacing={1}
+                  />
+                  {getRandomPrompts().map((prompt, index) => (
+                    <Flex
+                      alignItems="center"
+                      justifyContent="center"
+                      textAlign="center"
+                      border="1px solid"
+                      borderRadius="8px"
+                      key={index}
+                      h="80%"
+                      w="20%"
+                      p="10px"
+                      css={{
+                        wordWrap: "break-word",
+                        overflow: "hidden",
+                        maxWidth: "20%",
+                        transition: "box-shadow 0.3s ease-in-out",
+                        ":hover": {
+                          boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.5)",
+                        },
+                      }}
+                    >
+                      <Slide
+                        key={index}
+                        onClick={() => handleClickSlide(prompt)}
+                        prompt={prompt}
+                      />
+                    </Flex>
+                  ))}
+                  <Button
+                    p="8px"
+                    borderRadius="50"
+                    rightIcon={<GrNext />}
+                    onClick={handleNextSlide}
+                    iconSpacing={1}
+                  />
+                </Flex>
+
+                <Flex h="34vh" w="100%" p="16px" direction="column">
+                  <Text w="100%" fontSize="24px" mb="10px" textAlign="center">
+                    You can additionally add some more options:
+                  </Text>
+                  <Flex
+                    w="100%"
+                    h="100%"
+                    border="1px solid"
+                    borderRadius="8"
+                    alignItems="center"
+                    justifyContent="space-around"
+                  >
+                    <Flex direction="column" w="100%" borderRight="1px solid">
+                      <Text textAlign="center" fontSize="20px">
+                        Type
+                      </Text>
+                      <RadioGroup onChange={handleRadioClickType}>
+                        <Flex direction="column" justifyContent="center" pl="4">
+                          <Radio value="Crops">Crops</Radio>
+                          <Radio value="Plants">Plants</Radio>
+                          <Radio value="Trees">Trees</Radio>
+                          <Radio value="Flowers">Flowers</Radio>
+                          <Input
+                            variant="flushed"
+                            placeholder="others..."
+                            w="90%"
+                          />
+                        </Flex>
+                      </RadioGroup>
+                    </Flex>
+                    <Flex direction="column" w="100%" borderRight="1px solid">
+                      <Text textAlign="center" fontSize="20px">
+                        Weather
+                      </Text>
+                      <RadioGroup onChange={handleRadioClickWeather}>
+                        <Flex direction="column" justifyContent="center" pl="4">
+                          <Radio value="Sunny">Sunny</Radio>
+                          <Radio value="Rainy">Rainy</Radio>
+                          <Radio value="Humid">Humid</Radio>
+                          <Radio value="Frosty">Frosty</Radio>
+                          <Input
+                            variant="flushed"
+                            placeholder="others..."
+                            w="90%"
+                          />
+                        </Flex>
+                      </RadioGroup>
+                    </Flex>
+                    <Flex direction="column" w="100%" borderRight="1px solid">
+                      <Text textAlign="center" fontSize="20px">
+                        State
+                      </Text>
+                      <RadioGroup onChange={handleRadioClickCity}>
+                        <Flex direction="column" justifyContent="center" pl="4">
+                          <Radio value="Mumbai">Mumbai</Radio>
+                          <Radio value="Bengaluru">Bengaluru</Radio>
+                          <Radio value="Delhi">Delhi</Radio>
+                          <Radio value="Hyderabad">Hyderabad</Radio>
+                          <Input
+                            variant="flushed"
+                            placeholder="others..."
+                            w="90%"
+                          />
+                        </Flex>
+                      </RadioGroup>
+                    </Flex>
+                    <Flex direction="column" w="100%">
+                      <Text textAlign="center" fontSize="20px">
+                        Soil
+                      </Text>
+                      <RadioGroup onChange={handleRadioClickSoil}>
+                        <Flex direction="column" justifyContent="center" pl="4">
+                          <Radio value="Loamy soil">Loamy soil</Radio>
+                          <Radio value="Clay Soil">Clay Soil</Radio>
+                          <Radio value="Red Soil">Red Soil</Radio>
+                          <Radio value="Laterite Soil">Laterite Soil</Radio>
+                          <Input
+                            variant="flushed"
+                            placeholder="others..."
+                            w="90%"
+                          />
+                        </Flex>
+                      </RadioGroup>
+                    </Flex>
                   </Flex>
                 </Flex>
               </Flex>
-
-             
-            </Flex>
-        <Flex h="12vh" alignItems="center" p="10px" gap={2}>
-          <Textarea
-            bg="white"
-            fontSize="24px"
-            w="90%"
-            resize="vertical"
-            size="sm"
-            placeholder="Here is a sample placeholder"
-            onChange={handleInputChange}
-            value={inputValue}
-            color="black"
-          />
-          <Button type="submit" h="90%" onClick={handleClick}>
-            Submit
-          </Button>
-            </Flex></> :
-            
+            </>
+          ) : (
             <>
-            <Flex h="100vh" w="100%" bg="red" justifyContent="center" >
-                  {response.text}
-            </Flex>
-            </>}
+              <Flex
+                h="100vh"
+                w="100%"
+                direction="column"
+                position="relative"
+                justifyContent="center"
+                _before={{
+                  content: '""',
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  bottom: 0,
+                  right: 0,
+                  background:
+                    "linear-gradient(180deg, rgba(255, 255, 255, 0.2)0%, rgba(255, 255, 255, 0.2) 100%)",
+                  backdropFilter: "blur(20px) brightness(0.7)",
+                  filter: "brightness(1)",
+                  zIndex: 0,
+                }}
+              >
+                <Flex
+                  w="100%"
+                  direction="column"
+                  position="relative"
+                  justifyContent="center"
+                  _before={{
+                    content: '""',
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    bottom: 0,
+                    right: 0,
+                    background:
+                      "linear-gradient(180deg, rgba(255, 255, 255, 0.2)0%, rgba(255, 255, 255, 0.2) 100%)",
+                    backdropFilter: "blur(20px) brightness(0.7)",
+                    filter: "brightness(1)",
+                    zIndex: 0,
+                  }}
+                >
+                  <Text fontSize="24px" w="95%" ml="5" zIndex="100">
+                    {response.text &&
+                      response.text
+                        .split("\n")
+                        .map((line, index) => <Text key={index}>{line}</Text>)}
+                  </Text>
+                </Flex>
+              </Flex>
+            </>
+          )}
+          <Flex
+            h="12vh"
+            w="100%"
+            alignItems="center"
+            p="10px"
+            gap={2}
+            position="absolute"
+            bottom="6"
+          >
+            <Input
+              type="text"
+              bg="#252529"
+              color="white"
+              border="2px solid #505055"
+              height="40px"
+              fontSize="18px"
+              onChange={handleInputChange}
+              value={inputValue}
+            />
+            <Button
+              type="submit"
+              h="40px"
+              w="40px"
+              bg="#252529"
+              color="white"
+              border="2px solid #505055"
+              padding="10px"
+              onClick={handleClick}
+            >
+              <FiSend size="40px" color="#adadb7" />
+            </Button>
+          </Flex>
+        </Flex>
       </Flex>
-    </Flex>
     </>
   );
 }
