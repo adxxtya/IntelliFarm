@@ -78,17 +78,31 @@ const farmerPrompts = [
     setInputValue(event.target.value);
   };
 
-  const handleClick = () => {
-    axios
-      .post("YOUR_NODEJS_SERVER_URL", { message: inputValue })
-      .then((response) => {
-        console.log(response.data);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
+// const handleClick = async () => {
+// await axios.post("https://08c4-59-153-1-197.in.ngrok.io/ask", { geo: "pune", q: inputValue }, { headers: { "Access-Control-Allow-Origin": "*" }})
+// .then((response) => {
+// console.log(response.data);
+// })
+// .catch((error) => {
+// console.log(error);
+// });
+// };
+  
+  const handleClick = async () => {
+    const result = await fetch("https://08c4-59-153-1-197.in.ngrok.io/ask", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Access-Control-Allow-Origin": "*"
+    },
+      body: JSON.stringify({ geo: "pune", q: inputValue }), 
 
+    });
+    
+    const response = await result.json()
+};
+  
+  
   const handleRadioClick = (value) => {
     console.log(value);
   };
@@ -126,11 +140,11 @@ const farmerPrompts = [
       w="100%"
       justifyContent="center"
       alignItems="center"
-      bg="#151518"
+      bg="black"
       color="white"
     >
       <Flex h="100vh" w="80%" direction="column">
-        <Flex h="10vh">
+        <Flex h="10vh" w="100%" bg="green.200">
           Navbar
         </Flex>
         <Flex
@@ -289,6 +303,7 @@ const farmerPrompts = [
             placeholder="Here is a sample placeholder"
             onChange={handleInputChange}
             value={inputValue}
+            color="black"
           />
           <Button type="submit" h="90%" onClick={handleClick}>
             Submit
