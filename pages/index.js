@@ -7,11 +7,17 @@ import {
   Textarea,
   Radio,
   RadioGroup,
+  border,
+  SelectField,
+  MenuItem,
+  Select
 } from "@chakra-ui/react";
 import { Input, Button } from "@chakra-ui/react";
 import axios from "axios";
 import { motion } from "framer-motion";
 import { FaMicrophone } from "react-icons/fa";
+import { FiSend} from "react-icons/fi";
+
 import { GrNext, GrPrevious } from "react-icons/gr";
 import Image from "next/image";
 
@@ -144,16 +150,23 @@ const farmerPrompts = [
       w="100%"
       justifyContent="center"
       alignItems="center"
-      bg="black"
+      bg="#0f0f0f"
       color="white"
     >
       <Flex h="100vh" w="80%" direction="column">
         
-        
-       <Flex h="10vh" w="100%" ml="-12" alignItems="flex-end" mt="16px" position="absolute">
-            <Image src="/assets/farmer-logo.webp" width={80} height={50} />
-            <Text fontSize="36px">IntelliFarm</Text>
-          </Flex>
+
+		<Flex h="10vh" w="100vw" alignItems="center" bgColor="#202023" left="0" position="absolute" paddingX="50px" paddingY="10px">
+            <Image src="/assets/farmer-logo.webp" width={45} height={10}/>
+            <Text marginLeft="10px" fontSize="25px">IntelliFarm</Text>
+			<Select position="absolute" right='20px' placeholder='select city' width="15%" height="30px" border='0' color='white' bgColor="#151518" >
+				<option value="pune">Pune</option>
+				<option value="delhi">Delhi</option>
+				<option value="mumbai">Mumbai</option>
+				<option value="kolkata">Kolkata</option>
+				<option value="chennai">Chennai</option>				
+			</Select>
+		</Flex>
             {true ? <>
             <Flex
             h="78vh"
@@ -165,57 +178,77 @@ const farmerPrompts = [
             direction="column"
             mt="8vh"
           >
-              <Text w="100%" fontSize="24px" mb="2px" textAlign="center">
-                You can directly choose a random prompt from here
+              <Text w="100%" fontSize="20px" mb="10px" mt="20px" textAlign="center">
+                You can directly choose a prompt from here
               </Text>
-              <Flex
-                h="30vh"
-                w="100%"
-                alignItems="center"
-                justifyContent="center"
-                gap="8px"
-              >
-                <Button
+			  <Flex
+			  alignItems="center"
+			  >
+				<Button
                   p="8px"
                   borderRadius="50"
                   leftIcon={<GrPrevious />}
                   onClick={handlePrevSlide}
-                  iconSpacing={1} />
+                  iconSpacing={1} 
+				  m='10px'
+				  bgColor="#c7c9c8"
+				  />
+				<Flex
+					m='10px'
+					w="100%"
+					alignItems="center"
+					justifyContent="center"
+					gap="15px"
+					display="grid"
+					gridTemplateColumns="1fr 1fr"
+              >
+                
                 {getRandomPrompts().map((prompt, index) => (
                   <Flex
                     alignItems="center"
-                    justifyContent="center"
+                    cursor="pointer"
                     textAlign="center"
-                    border="1px solid"
+					bg="#202022"
+					color="white"
+					border="2px solid #505055"
                     borderRadius="8px"
                     key={index}
-                    h="80%"
-                    w="20%"
-                    p="10px"
+                    h="30px"
+                    w="100%"
+                    p="15px"
+					overflow="hidden"
+					whiteSpace="nowrap"
+					textOverflow="ellipsis"
                     css={{
-                      wordWrap: "break-word",
-                      overflow: "hidden",
-                      maxWidth: "20%",
-                      transition: "box-shadow 0.3s ease-in-out",
+						transition: "box-shadow 0.3s ease-in-out",
                       ":hover": {
-                        boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.5)",
+                        boxShadow: "0px 0px 10px black",
                       },
                     }}
                   >
                     <Slide
                       key={index}
                       onClick={() => handleClickSlide(prompt)}
-                      prompt={prompt} />
+                      prompt={prompt} 
+					  />
                   </Flex>
                 ))}
-                <Button
+                
+              </Flex>
+			  <Button
                   p="8px"
                   borderRadius="50"
                   rightIcon={<GrNext />}
                   onClick={handleNextSlide}
-                  iconSpacing={1} />
-              </Flex>
-
+                  iconSpacing={1} 
+				  m='10px'
+				  bgColor="#c7c9c8"
+				 
+				  />
+			  </Flex>
+			  
+              
+			  
               <Flex h="34vh" w="100%" p="16px" direction="column">
                 <Text w="100%" fontSize="24px" mb="10px" textAlign="center">
                   You can additionally add some more options:
@@ -256,20 +289,7 @@ const farmerPrompts = [
                       </Flex>
                     </RadioGroup>
                   </Flex>
-                  <Flex direction="column" w="100%" borderRight="1px solid">
-                    <Text textAlign="center" fontSize="20px">
-                      State
-                    </Text>
-                    <RadioGroup onChange={handleRadioClick}>
-                      <Flex direction="column" justifyContent="center" pl="4">
-                        <Radio value="Maharashtra">Maharashtra</Radio>
-                        <Radio value="Gujarat">Gujarat</Radio>
-                        <Radio value="Karnataka">Karnataka</Radio>
-                        <Radio value="Uttar Pradesh">Uttar Pradesh</Radio>
-                        <Input variant="flushed" placeholder="others..." w="90%" />
-                      </Flex>
-                    </RadioGroup>
-                  </Flex>
+                  
                   <Flex direction="column" w="100%">
                     <Text textAlign="center" fontSize="20px">
                       Soil
@@ -289,27 +309,42 @@ const farmerPrompts = [
 
              
             </Flex>
-        <Flex h="12vh" alignItems="center" p="10px" gap={2}>
-          <Textarea
+	
+        <Flex h="12vh" alignItems="center" p="10px" gap={2} >
+			<Input 
+				type="text" 
+				bg="#252529"
+				color="white"
+				border="2px solid #505055"
+				height="40px"
+				fontSize="18px"
+			/>
+          {/* <Textarea
             bg="white"
-            fontSize="24px"
-            w="90%"
-            resize="vertical"
-            size="sm"
-            placeholder="Here is a sample placeholder"
+			resize={false}
+			size
             onChange={handleInputChange}
             value={inputValue}
             color="black"
-          />
-          <Button type="submit" h="90%" onClick={handleClick}>
-            Submit
+          /> */}
+          <Button 
+			type="submit" 
+			h="40px"
+			w="40px"
+			bg="#252529"
+			color="white"
+			border="2px solid #505055"
+		  	padding="10px"
+			onClick={handleClick}
+
+		  >
+            <FiSend size="40px" color="#adadb7"/>
+
           </Button>
-            </Flex></> :
-            
-            <>
-            <Flex h="100vh" w="100%" bg="red" justifyContent="center" >
-                  {response.text}
             </Flex>
+			</> :            
+            <>
+            
             </>}
       </Flex>
     </Flex>
