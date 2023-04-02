@@ -175,9 +175,6 @@ export default function Home() {
     inputRef.current.value = prompt
   };
 
-  const finalQuery =
-    "I am a farmer. ${geo && ` I am from ${geo}.`}. My question is, ${q} ?. ${info.soil && `Also consider My soil type is ${info.soil}.`}, ${weather && weather is ${info.weather}} and ${type && type of plant is ${info.type}}. ${geo && consider the current and future weather of ${geo}} and soil minerals. Give me the response in list form only. without any prefix and postfix. max 10 responses. Response should add the soil realated properties such as color, texture, structure, porosity, density, consistence, aggregate stability, minerals, PH level, temperature (only if necessary and add prefix soil properties.). Give me only one answer yes OR no once if the question is of type closed question (for example: yes.) Also tell me the temperature, pressure and humidity of ${geo} in Temperature: 26°C format. Also give me a suggestion related to future says suggestion: the suggestion. Also give me one pro tip says pro tip: the tip. Try to use future tense. Respone should strictly be in the language of the question ";
-
   return (
     <>
       <Flex
