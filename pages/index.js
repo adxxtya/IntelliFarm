@@ -13,6 +13,7 @@ import axios from "axios";
 import { motion } from "framer-motion";
 import { FaMicrophone } from "react-icons/fa";
 import { GrNext, GrPrevious } from "react-icons/gr";
+import Image from "next/image";
 
 export default function Home() {
 const farmerPrompts = [
@@ -53,6 +54,8 @@ const farmerPrompts = [
 
   const [inputValue, setInputValue] = useState("");
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [isResponseSuccess, setIsResponseSuccess] = useState(false);
+  const [response, setResponse] = useState({})
 
   const handleNextSlide = () => {
     setCurrentSlide((currentSlide + 1) % farmerPrompts.length);
@@ -78,30 +81,28 @@ const farmerPrompts = [
     setInputValue(event.target.value);
   };
 
-// const handleClick = async () => {
-// await axios.post("https://08c4-59-153-1-197.in.ngrok.io/ask", { geo: "pune", q: inputValue }, { headers: { "Access-Control-Allow-Origin": "*" }})
-// .then((response) => {
-// console.log(response.data);
-// })
-// .catch((error) => {
-// console.log(error);
-// });
-// };
-  
   const handleClick = async () => {
-    const result = await fetch("https://08c4-59-153-1-197.in.ngrok.io/ask", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Access-Control-Allow-Origin": "*"
-    },
-      body: JSON.stringify({ geo: "pune", q: inputValue }), 
+    const result = await fetch(
+      "https://intellifarm-backend.onrender.com/ask",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Access-Control-Allow-Origin": "*",
+        },
+        body: JSON.stringify({ geo: "pune",q: inputValue }),
+      }
+    );
 
-    });
-    
-    const response = await result.json()
-};
-  
+    if (result.ok) {
+      setIsResponseSuccess(true);
+    }
+
+    const response = await result.json();
+    setResponse(response)
+    console.log(response);
+    console.log(Boolean(response));
+  };
   
   const handleRadioClick = (value) => {
     console.log(value);
@@ -130,11 +131,14 @@ const farmerPrompts = [
     );
   };
 
+  console.log(response);
+
   const handleClickSlide = (prompt) => {
     setInputValue(prompt);
   };
 
   return (
+    <>
     <Flex
       h="100vh"
       w="100%"
@@ -144,155 +148,147 @@ const farmerPrompts = [
       color="white"
     >
       <Flex h="100vh" w="80%" direction="column">
-        <Flex h="10vh" w="100%" bg="green.200">
-          Navbar
-        </Flex>
-        <Flex
-          h="78vh"
-          maxH="auto"
-          overflowY="auto"
-          paddingY="20px"
-          paddingX="10px"
-          scrollBehavior="smooth"
-          direction="column"
-        >
-          <Flex
-            h="26vh"
-            w="100%"
-            alignItems="center"
-            justifyContent="center"
-            gap="8px"
+        
+        
+       <Flex h="10vh" w="100%" ml="-12" alignItems="flex-end" mt="16px" position="absolute">
+            <Image src="/assets/farmer-logo.webp" width={80} height={50} />
+            <Text fontSize="36px">IntelliFarm</Text>
+          </Flex>
+            {true ? <>
+            <Flex
+            h="78vh"
+            maxH="auto"
+            overflowY="auto"
+            paddingY="20px"
+            paddingX="10px"
+            scrollBehavior="smooth"
+            direction="column"
+            mt="8vh"
           >
-            <Button
-              p="8px"
-              borderRadius="50"
-              leftIcon={<GrPrevious />}
-              onClick={handlePrevSlide}
-              iconSpacing={1}
-            />
-            {getRandomPrompts().map((prompt, index) => (
+              <Text w="100%" fontSize="24px" mb="2px" textAlign="center">
+                You can directly choose a random prompt from here
+              </Text>
               <Flex
+                h="30vh"
+                w="100%"
                 alignItems="center"
                 justifyContent="center"
-                textAlign="center"
-                border="1px solid"
-                borderRadius="8px"
-                key={index}
-                h="80%"
-                w="20%"
-                p="10px"
-                css={{
-                  wordWrap: "break-word",
-                  overflow: "hidden",
-                  maxWidth: "20%",
-                  transition: "box-shadow 0.3s ease-in-out",
-                  ":hover": {
-                    boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.5)",
-                  },
-                }}
+                gap="8px"
               >
-                <Slide
-                  key={index}
-                  onClick={() => handleClickSlide(prompt)}
-                  prompt={prompt}
-                />
+                <Button
+                  p="8px"
+                  borderRadius="50"
+                  leftIcon={<GrPrevious />}
+                  onClick={handlePrevSlide}
+                  iconSpacing={1} />
+                {getRandomPrompts().map((prompt, index) => (
+                  <Flex
+                    alignItems="center"
+                    justifyContent="center"
+                    textAlign="center"
+                    border="1px solid"
+                    borderRadius="8px"
+                    key={index}
+                    h="80%"
+                    w="20%"
+                    p="10px"
+                    css={{
+                      wordWrap: "break-word",
+                      overflow: "hidden",
+                      maxWidth: "20%",
+                      transition: "box-shadow 0.3s ease-in-out",
+                      ":hover": {
+                        boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.5)",
+                      },
+                    }}
+                  >
+                    <Slide
+                      key={index}
+                      onClick={() => handleClickSlide(prompt)}
+                      prompt={prompt} />
+                  </Flex>
+                ))}
+                <Button
+                  p="8px"
+                  borderRadius="50"
+                  rightIcon={<GrNext />}
+                  onClick={handleNextSlide}
+                  iconSpacing={1} />
               </Flex>
-            ))}
-            <Button
-              p="8px"
-              borderRadius="50"
-              rightIcon={<GrNext />}
-              onClick={handleNextSlide}
-              iconSpacing={1}
-            />
-          </Flex>
 
-          <Flex h="30vh" w="100%"  p="16px" direction="column">
-            <Text w="100%" fontSize="24px" textAlign="center">
-              You can additionally add some more options:
-            </Text>
-            <Flex
-              w="100%"
-              h="100%"
-              border="1px solid"
-              borderRadius="8"
-              alignItems="center"
-              justifyContent="space-around"
-            >
-              <Flex direction="column" w="100%" borderRight="1px solid">
-                <Text textAlign="center" fontSize="20px">
-                  Type
+              <Flex h="34vh" w="100%" p="16px" direction="column">
+                <Text w="100%" fontSize="24px" mb="10px" textAlign="center">
+                  You can additionally add some more options:
                 </Text>
-                <RadioGroup onChange={handleRadioClick}>
-                  <Flex direction="column" justifyContent="center" pl="4">
-                    <Radio value="Crops">Crops</Radio>
-                    <Radio value="Plants">Plants</Radio>
-                    <Radio value="Trees">Trees</Radio>
-                    <Radio value="Flowers">Flowers</Radio>
-                    <Input variant="flushed" placeholder="others..." w="90%" />
+                <Flex
+                  w="100%"
+                  h="100%"
+                  border="1px solid"
+                  borderRadius="8"
+                  alignItems="center"
+                  justifyContent="space-around"
+                >
+                  <Flex direction="column" w="100%" borderRight="1px solid">
+                    <Text textAlign="center" fontSize="20px">
+                      Type
+                    </Text>
+                    <RadioGroup onChange={handleRadioClick}>
+                      <Flex direction="column" justifyContent="center" pl="4">
+                        <Radio value="Crops">Crops</Radio>
+                        <Radio value="Plants">Plants</Radio>
+                        <Radio value="Trees">Trees</Radio>
+                        <Radio value="Flowers">Flowers</Radio>
+                        <Input variant="flushed" placeholder="others..." w="90%" />
+                      </Flex>
+                    </RadioGroup>
                   </Flex>
-                </RadioGroup>
-              </Flex>
-              <Flex direction="column" w="100%" borderRight="1px solid">
-                <Text textAlign="center" fontSize="20px">
-                  Weather
-                </Text>
-                <RadioGroup onChange={handleRadioClick}>
-                  <Flex direction="column" justifyContent="center" pl="4">
-                    <Radio value="Sunny">Sunny</Radio>
-                    <Radio value="Rainy">Rainy</Radio>
-                    <Radio value="Humid">Humid</Radio>
-                    <Radio value="Frosty">Frosty</Radio>
-                    <Input variant="flushed" placeholder="others..." w="90%" />
+                  <Flex direction="column" w="100%" borderRight="1px solid">
+                    <Text textAlign="center" fontSize="20px">
+                      Weather
+                    </Text>
+                    <RadioGroup onChange={handleRadioClick}>
+                      <Flex direction="column" justifyContent="center" pl="4">
+                        <Radio value="Sunny">Sunny</Radio>
+                        <Radio value="Rainy">Rainy</Radio>
+                        <Radio value="Humid">Humid</Radio>
+                        <Radio value="Frosty">Frosty</Radio>
+                        <Input variant="flushed" placeholder="others..." w="90%" />
+                      </Flex>
+                    </RadioGroup>
                   </Flex>
-                </RadioGroup>
-              </Flex>
-              <Flex direction="column" w="100%" borderRight="1px solid">
-                <Text textAlign="center" fontSize="20px">
-                  State
-                </Text>
-                <RadioGroup onChange={handleRadioClick}>
-                  <Flex direction="column" justifyContent="center" pl="4">
-                    <Radio value="Maharashtra">Maharashtra</Radio>
-                    <Radio value="Gujarat">Gujarat</Radio>
-                    <Radio value="Karnataka">Karnataka</Radio>
-                    <Radio value="Uttar Pradesh">Uttar Pradesh</Radio>
-                    <Input variant="flushed" placeholder="others..." w="90%" />
+                  <Flex direction="column" w="100%" borderRight="1px solid">
+                    <Text textAlign="center" fontSize="20px">
+                      State
+                    </Text>
+                    <RadioGroup onChange={handleRadioClick}>
+                      <Flex direction="column" justifyContent="center" pl="4">
+                        <Radio value="Maharashtra">Maharashtra</Radio>
+                        <Radio value="Gujarat">Gujarat</Radio>
+                        <Radio value="Karnataka">Karnataka</Radio>
+                        <Radio value="Uttar Pradesh">Uttar Pradesh</Radio>
+                        <Input variant="flushed" placeholder="others..." w="90%" />
+                      </Flex>
+                    </RadioGroup>
                   </Flex>
-                </RadioGroup>
-              </Flex>
-              <Flex direction="column" w="100%">
-                <Text textAlign="center" fontSize="20px">
-                  Soil
-                </Text>
-                <RadioGroup onChange={handleRadioClick}>
-                  <Flex direction="column" justifyContent="center" pl="4">
-                    <Radio value="Loamy soil">Loamy soil</Radio>
-                    <Radio value="Clay Soil">Clay Soil</Radio>
-                    <Radio value="Red Soil">Red Soil</Radio>
-                    <Radio value="Laterite Soil">Laterite Soil</Radio>
-                    <Input variant="flushed" placeholder="others..." w="90%" />
+                  <Flex direction="column" w="100%">
+                    <Text textAlign="center" fontSize="20px">
+                      Soil
+                    </Text>
+                    <RadioGroup onChange={handleRadioClick}>
+                      <Flex direction="column" justifyContent="center" pl="4">
+                        <Radio value="Loamy soil">Loamy soil</Radio>
+                        <Radio value="Clay Soil">Clay Soil</Radio>
+                        <Radio value="Red Soil">Red Soil</Radio>
+                        <Radio value="Laterite Soil">Laterite Soil</Radio>
+                        <Input variant="flushed" placeholder="others..." w="90%" />
+                      </Flex>
+                    </RadioGroup>
                   </Flex>
-                </RadioGroup>
+                </Flex>
               </Flex>
-            </Flex>
-          </Flex>
 
-          <Flex
-            h="22vh"
-            w="100%"
-            gap="3"
-            mt="4"
-            justifyContent="center"
-            alignItems="center"
-            direction="column"
-          >
-            <Flex bg="white" p="20px" borderRadius="50">
-              <Icon as={FaMicrophone} boxSize={8} />
+             
             </Flex>
-            Or Record Here...
-          </Flex>
-        </Flex>
         <Flex h="12vh" alignItems="center" p="10px" gap={2}>
           <Textarea
             bg="white"
@@ -308,8 +304,15 @@ const farmerPrompts = [
           <Button type="submit" h="90%" onClick={handleClick}>
             Submit
           </Button>
-        </Flex>
+            </Flex></> :
+            
+            <>
+            <Flex h="100vh" w="100%" bg="red" justifyContent="center" >
+                  {response.text}
+            </Flex>
+            </>}
       </Flex>
     </Flex>
+    </>
   );
 }
