@@ -95,7 +95,8 @@ export default function Ask() {
     "What are some effective ways to manage manure on my farm?",
     "How can I use natural methods to control aphids on my crops?",
   ];
-  
+
+  const prompts = farmerPrompts.sort(() => Math.random() - 0.5).slice(0, 9);
 
   return (
     <Box h="100vh" w="100%">
@@ -118,149 +119,67 @@ export default function Ask() {
         <Flex position="absolute" left="10" w="100%" h="100%" mb="80px">
           <Flex
             w="50%"
-            bg="red.100"
             justifyContent="center"
             alignItems="center"
             direction="column"
             whiteSpace="normal"
+            flexWrap="wrap"
           >
             <Flex>
-              <Flex
-                border="2px solid"
-                h="auto"
-                p={4}
-                m={2}
-                direction="column"
-                borderRadius={25}
-                alignItems="center"
-                justifyContent="space-between"
-                maxW="180px"
-                minW="180px"
-              >
-                What are some good resources for finding funding for farming
-                projects?
-              </Flex>
-              <Flex
-                border="2px solid"
-                h="auto"
-                p={4}
-                m={2}
-                direction="column"
-                borderRadius={25}
-                alignItems="center"
-                justifyContent="space-between"
-                maxW="180px"
-                minW="180px"
-              >
-                How can I use natural methods to control aphids on my crops?
-              </Flex>
-              <Flex
-                border="2px solid"
-                h="auto"
-                p={4}
-                m={2}
-                direction="column"
-                borderRadius={25}
-                alignItems="center"
-                justifyContent="space-between"
-                maxW="180px"
-                minW="180px"
-              >
-                What are some good resources for finding agricultural jobs or
-                internships?
-              </Flex>
+              {prompts.slice(0, 3).map((prompt) => (
+                <Flex
+                  border="2px solid"
+                  h="auto"
+                  p={4}
+                  m={2}
+                  direction="column"
+                  borderRadius={25}
+                  alignItems="center"
+                  justifyContent="space-between"
+                  maxW="180px"
+                  minW="180px"
+                >
+                  {prompt}
+                </Flex>
+              ))}
             </Flex>
+
             <Flex>
-              <Flex
-                border="2px solid"
-                h="auto"
-                p={4}
-                m={2}
-                direction="column"
-                borderRadius={25}
-                alignItems="center"
-                justifyContent="space-between"
-                maxW="180px"
-                minW="180px"
-              >
-                What are some good resources for finding funding for farming
-                projects?
-              </Flex>
-              <Flex
-                border="2px solid"
-                h="auto"
-                p={4}
-                m={2}
-                direction="column"
-                borderRadius={25}
-                alignItems="center"
-                justifyContent="space-between"
-                maxW="180px"
-                minW="180px"
-              >
-                How can I use natural methods to control aphids on my crops?
-              </Flex>
-              <Flex
-                border="2px solid"
-                h="auto"
-                p={4}
-                m={2}
-                direction="column"
-                borderRadius={25}
-                alignItems="center"
-                justifyContent="space-between"
-                maxW="180px"
-                minW="180px"
-              >
-                What are some good resources for finding agricultural jobs or
-                internships?
-              </Flex>
+              {prompts.slice(0, 3).map((prompt) => (
+                <Flex
+                  border="2px solid"
+                  h="auto"
+                  p={4}
+                  m={2}
+                  direction="column"
+                  borderRadius={25}
+                  alignItems="center"
+                  justifyContent="space-between"
+                  maxW="180px"
+                  minW="180px"
+                >
+                  {prompt}
+                </Flex>
+              ))}
             </Flex>
+
             <Flex>
-              <Flex
-                border="2px solid"
-                h="auto"
-                p={4}
-                m={2}
-                direction="column"
-                borderRadius={25}
-                alignItems="center"
-                justifyContent="space-between"
-                maxW="180px"
-                minW="180px"
-              >
-                What are some good resources for finding funding for farming
-                projects?
-              </Flex>
-              <Flex
-                border="2px solid"
-                h="auto"
-                p={4}
-                m={2}
-                direction="column"
-                borderRadius={25}
-                alignItems="center"
-                justifyContent="space-between"
-                maxW="180px"
-                minW="180px"
-              >
-                How can I use natural methods to control aphids on my crops?
-              </Flex>
-              <Flex
-                border="2px solid"
-                h="auto"
-                p={4}
-                m={2}
-                direction="column"
-                borderRadius={25}
-                alignItems="center"
-                justifyContent="space-between"
-                maxW="180px"
-                minW="180px"
-              >
-                What are some good resources for finding agricultural jobs or
-                internships?
-              </Flex>
+              {prompts.slice(0, 3).map((prompt) => (
+                <Flex
+                  border="2px solid"
+                  h="auto"
+                  p={4}
+                  m={2}
+                  direction="column"
+                  borderRadius={25}
+                  alignItems="center"
+                  justifyContent="space-between"
+                  maxW="180px"
+                  minW="180px"
+                >
+                  {prompt}
+                </Flex>
+              ))}
             </Flex>
           </Flex>
         </Flex>
