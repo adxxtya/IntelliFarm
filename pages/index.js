@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import { FaMicrophone } from 'react-icons/fa';
 import { GrNext, GrPrevious } from 'react-icons/gr'
 
+
 export default function Home() {
   const farmerPrompts = [
     "How can I improve the fertility of my soil?",
@@ -95,7 +96,7 @@ export default function Home() {
       });
   };
 
-  const Slide = ({ prompt }) => {
+  const Slide = ({ prompt, onClick }) => {
   return (
     <motion.div
       initial={{ opacity: 0, x: 100 }}
@@ -110,12 +111,18 @@ export default function Home() {
       h="80%"
       w="20%"
       p="10px"
+      onClick={onClick}
       css={{ wordWrap: "break-word", overflow: "hidden", maxWidth: "20%" }}
     >
       <Text>{prompt}</Text>
     </motion.div>
   );
-};
+  };
+  
+  const handleClickSlide = (prompt) => {
+    setInputValue(prompt);
+  };
+
 
   return (
     <Flex
@@ -164,7 +171,7 @@ export default function Home() {
                   maxWidth: "20%",
                 }}
               >
-                <Slide key={index} prompt={prompt} />
+                <Slide key={index} onClick={() => handleClickSlide(prompt)} prompt={prompt} />
               </Flex>
             ))}
             <Button p="8px" borderRadius="50" rightIcon={<GrNext />} onClick={handleNextSlide}  iconSpacing={1} />
@@ -188,6 +195,7 @@ export default function Home() {
             size="sm"
             placeholder="Here is a sample placeholder"
             onChange={handleInputChange}
+            value={inputValue}
           />
           <Button type="submit" h="90%" onClick={handleClick}>
             Submit
